@@ -1,24 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Button, Modal, DatePicker, Space, Select, Form } from "antd";
+import { TaskModal } from "./TaskModal";
+import moment from "moment";
+import { SearchContext } from "./Provider/SearchProvider";
+import { debounce } from "lodash";
 
-export const NavBar = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+export const NavBar = (props) => {
+  const [isCreateModal, setIsCreateModal] = useState(true);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [task, setTask] = useState({
+    name: "",
+    created: "",
+    deadline: "",
+    status: "",
+  });
+
+  const { searchTerm, setSearchTerm } = useContext(SearchContext);
 
   const onChange = (date, dateString) => {
     console.log(date, dateString);
   };
-
-  const showModal = () => {
-    setIsModalOpen(true);
+  const showEditModal = (record) => {
+    setTask({
+      ...record,
+      deadline: "",
+      created: moment(),
+      status: "",
+    });
+    setIsEditModalOpen(true);
   };
 
   const handleOk = () => {
-    setIsModalOpen(false);
+    setIsEditModalOpen(false);
   };
 
   const handleCancel = () => {
-    setIsModalOpen(false);
+    setIsEditModalOpen(false);
   };
+  const { confirm } = Modal;
+
   return (
     <div className="flex justify-between px-[26px] py-[24px] items-center">
       <div className="text-[#5E5873] font-medium">Task List</div>
@@ -27,6 +47,9 @@ export const NavBar = () => {
           <input
             className="border rounded-[5px] mr-[27px] py-[8px] pl-[12px] text-[12px] pr-[30px]"
             placeholder="Search task"
+            onChange={debounce((e) => {
+              setSearchTerm(e.target.value.toLocaleLowerCase());
+            }, 500)}
           />
           <img
             className="absolute top-[30%] right-[18%]"
@@ -36,42 +59,19 @@ export const NavBar = () => {
         </div>
         <button
           type="submit"
-          onClick={showModal}
+          onClick={showEditModal}
           className="bg-[#3C6D73] rounded-[5px] px-[30px] py-[8px] text-white text-[12px] font-medium"
         >
           + Add Task
         </button>
-        <Modal
-          title="ADD TASK"
-          open={isModalOpen}
-          onOk={handleOk}
-          onCancel={handleCancel}
-        >
-          <div className="mb-[12px]">
-            <p>Task name</p>
-            <input
-              className="border rounded-[5px] w-full px-[15px] py-[8px]"
-              placeholder="Task name"
-              type="text"
-            />
-          </div>
-          <div className="mb-[12px]">
-            <p>Deadline</p>
-            <Space style={{ width: "100%" }} direction="vertical">
-              <DatePicker onChange={onChange} />
-            </Space>
-          </div>
-          <div>
-            <p>Status</p>
-            <Form.Item>
-              <Select>
-                <Select.Option value="done">Done</Select.Option>
-                <Select.Option value="doing">Doing</Select.Option>
-                <Select.Option value="fail">Fail</Select.Option>
-              </Select>
-            </Form.Item>
-          </div>
-        </Modal>
+        <TaskModal
+          isCreateModal={isCreateModal}
+          isEditModalOpen={isEditModalOpen}
+          handleOk={handleOk}
+          handleCancel={handleCancel}
+          task={task}
+          onChange={onChange}
+        />
       </div>
     </div>
   );

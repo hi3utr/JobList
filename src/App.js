@@ -1,29 +1,31 @@
 import "./App.css";
 import TableList from "./TableList";
 import { NavBar } from "./NavBar";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-
+import { SearchContext } from "./Provider/SearchProvider";
 function App() {
-  const [jobs, setJobs] = useState([]);
-  const [deleteJob, setDeleteJob] = useState(false);
+  const { searchTerm, setSearchTerm } = useContext(SearchContext);
   var jobApi = "https://630eca933792563418817e08.mockapi.io/products";
-  useEffect(() => {
-    axios.get(jobApi).then((res) => {
+  const [jobs, setJobs] = useState([]);
+  const fetchApi = (search) =>
+    axios.get(jobApi, { params: { search } }).then((res) => {
       setJobs(res.data);
     });
-  }, [deleteJob]);
+
+  useEffect(() => {
+    fetchApi(searchTerm);
+  }, [searchTerm]);
 
   return (
     <div className="App">
-      <NavBar />
+      <NavBar jobApi={jobApi} />
       {jobs.length > 0 && (
         <TableList
           jobs={jobs}
           setJobs={setJobs}
           jobApi={jobApi}
-          deleteJob={deleteJob}
-          setDeleteJob={setDeleteJob}
+          fetchApi={fetchApi}
         />
       )}
     </div>

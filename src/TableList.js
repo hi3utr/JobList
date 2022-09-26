@@ -1,15 +1,42 @@
-import { Space, Table, Tag, Modal, Form, Select, DatePicker } from "antd";
+import { Space, Table, Tag, Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 import * as dayjs from "dayjs";
-import Item from "antd/lib/list/Item";
+import moment from "moment";
+import { TaskModal } from "./TaskModal";
 
 const TableList = (props) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [task, setTask] = useState({
+    name: "",
+    created: "",
+    deadline: "",
+    status: "",
+  });
+  const tags = [
+    {
+      value: "done",
+      color: "green",
+    },
+    {
+      value: "doing",
+      color: "orange",
+    },
+    {
+      value: "fail",
+      color: "volcano",
+    },
+  ];
   const onChange = (date, dateString) => {
     console.log(date, dateString);
   };
-  const showEditModal = () => {
+  const showEditModal = (record) => {
+    setTask({
+      ...record,
+      deadline: moment(record.deadline),
+      created: moment(record.created),
+      status: tags[record.status % 3].value,
+    });
     setIsEditModalOpen(true);
   };
 
@@ -22,7 +49,15 @@ const TableList = (props) => {
   };
   const { confirm } = Modal;
 
-  const tags = ["done", "doing", "fail"];
+  const getStatus = (status) => {
+    const tag = tags[status % 3];
+
+    return (
+      <Tag color={tag.color} key={tag}>
+        {tag.value.toUpperCase()}
+      </Tag>
+    );
+  };
 
   const columns = [
     {
@@ -46,30 +81,14 @@ const TableList = (props) => {
       title: "STATUS",
       key: "status",
       dataIndex: "status",
-      render: (_, { tags }) => (
-        <>
-          {tags.map((tag) => {
-            let color = tag.length > 4 ? "orange" : "green";
-
-            if (tag === "fail") {
-              color = "volcano";
-            }
-
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      ),
+      render: (status) => <>{getStatus(status)}</>,
     },
     {
       title: "ACTION",
       key: "action",
-      render: (_, record) => (
+      render: (record) => (
         <Space size="middle">
-          <button onClick={showEditModal}>
+          <button onClick={() => showEditModal(record)}>
             <img src="assets/icons/edit.png" alt="" />
           </button>
 
@@ -85,12 +104,7 @@ const TableList = (props) => {
     },
   ];
 
-  const handleDelete = (record) => {
-    props.setJobs((prev) => {
-      return prev.filter((job) => job.key !== record.key);
-    });
-  };
-  function handleDeleteCourse(record) {
+  function handleDeleteJob(record) {
     var options = {
       method: "DELETE",
       headers: {
@@ -100,6 +114,7 @@ const TableList = (props) => {
     fetch(props.jobApi + "/" + record.key, options)
       .then((response) => {
         response.json();
+        props.fetchApi();
       })
       .then(function () {});
   }
@@ -114,48 +129,22 @@ const TableList = (props) => {
 
       onOk() {
         // handleDelete(record);
-        handleDeleteCourse(record);
-        props.setDeleteJob(!props.deleteJob);
+        handleDeleteJob(record);
       },
-      onCancel() {
-        console.log("Cancel");
-      },
+      onCancel() {},
     });
   };
   return (
     <div>
       <Table columns={columns} dataSource={props.jobs} />
-      <Modal
-        title="EDIT TASK"
-        open={isEditModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <div className="mb-[12px]">
-          <p>Task name</p>
-          <input
-            className="border rounded-[5px] w-full px-[15px] py-[8px]"
-            placeholder="Task name"
-            type="text"
-          />
-        </div>
-        <div className="mb-[12px]">
-          <p>Deadline</p>
-          <Space style={{ width: "100%" }} direction="vertical">
-            <DatePicker onChange={onChange} />
-          </Space>
-        </div>
-        <div>
-          <p>Status</p>
-          <Form.Item>
-            <Select>
-              <Select.Option value="done">Done</Select.Option>
-              <Select.Option value="doing">Doing</Select.Option>
-              <Select.Option value="fail">Fail</Select.Option>
-            </Select>
-          </Form.Item>
-        </div>
-      </Modal>
+      <TaskModal
+        jobApi={props.jobApi}
+        isEditModalOpen={isEditModalOpen}
+        handleOk={handleOk}
+        handleCancel={handleCancel}
+        task={task}
+        onChange={onChange}
+      />
     </div>
   );
 };

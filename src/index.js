@@ -4,11 +4,14 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "antd/dist/antd.min.css";
+import { SearchProvider } from "./Provider/SearchProvider";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <App />
+    <SearchProvider>
+      <App />
+    </SearchProvider>
   </React.StrictMode>
 );
 
