@@ -1,11 +1,13 @@
 import { Space, Table, Tag, Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import * as dayjs from "dayjs";
 import moment from "moment";
 import { TaskModal } from "./TaskModal";
+import { SearchContext } from "./Provider/SearchProvider";
 
 const TableList = (props) => {
+  const { searchTerm, setSearchTerm } = useContext(SearchContext);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [task, setTask] = useState({
     name: "",
@@ -27,21 +29,20 @@ const TableList = (props) => {
       color: "volcano",
     },
   ];
-  const onChange = (date, dateString) => {
-    console.log(date, dateString);
-  };
+  const onChange = (date, dateString) => {};
   const showEditModal = (record) => {
     setTask({
       ...record,
       deadline: moment(record.deadline),
       created: moment(record.created),
-      status: tags[record.status % 3].value,
+      status: record.status % 3,
     });
     setIsEditModalOpen(true);
   };
 
   const handleOk = () => {
     setIsEditModalOpen(false);
+    props.fetchApi(searchTerm);
   };
 
   const handleCancel = () => {
@@ -52,11 +53,14 @@ const TableList = (props) => {
   const getStatus = (status) => {
     const tag = tags[status % 3];
 
-    return (
-      <Tag color={tag.color} key={tag}>
-        {tag.value.toUpperCase()}
-      </Tag>
-    );
+    if (tag)
+      return (
+        <Tag color={tag.color} key={tag}>
+          {tag.value.toUpperCase()}
+        </Tag>
+      );
+
+    return;
   };
 
   const columns = [
@@ -144,6 +148,7 @@ const TableList = (props) => {
         handleCancel={handleCancel}
         task={task}
         onChange={onChange}
+        jobId={task.key}
       />
     </div>
   );

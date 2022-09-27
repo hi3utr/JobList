@@ -19,7 +19,7 @@ function App() {
 
   return (
     <div className="App">
-      <NavBar jobApi={jobApi} />
+      <NavBar fetchApi={fetchApi} />
       {jobs.length > 0 && (
         <TableList
           jobs={jobs}

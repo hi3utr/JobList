@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import { Button, Modal, DatePicker, Space, Select, Form } from "antd";
 import { TaskModal } from "./TaskModal";
 import moment from "moment";
@@ -14,6 +14,7 @@ export const NavBar = (props) => {
     deadline: "",
     status: "",
   });
+  const inputSearch = useRef();
 
   const { searchTerm, setSearchTerm } = useContext(SearchContext);
 
@@ -32,6 +33,8 @@ export const NavBar = (props) => {
 
   const handleOk = () => {
     setIsEditModalOpen(false);
+    inputSearch.current.value = "";
+    props.fetchApi();
   };
 
   const handleCancel = () => {
@@ -46,6 +49,7 @@ export const NavBar = (props) => {
         <div className="relative">
           <input
             className="border rounded-[5px] mr-[27px] py-[8px] pl-[12px] text-[12px] pr-[30px]"
+            ref={inputSearch}
             placeholder="Search task"
             onChange={debounce((e) => {
               setSearchTerm(e.target.value.toLocaleLowerCase());
