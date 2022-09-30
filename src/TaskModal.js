@@ -1,5 +1,5 @@
 import { Space, Modal, Form, Select, DatePicker, Button } from "antd";
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 
 export const TaskModal = (props) => {
   const [onSave, setOnSave] = useState(false);
@@ -42,20 +42,29 @@ export const TaskModal = (props) => {
     });
   }
 
+  const title = useMemo(() => {
+    if (props.isCreateModal) return "Add Task";
+    return "Edit Task";
+  }, [props.isCreateModal]);
+
+  const handleFinish = useCallback(
+    (values) => {
+      if (props.isCreateModal) return createJob(values);
+      return updateJob(values);
+    },
+    [props.isCreateModal]
+  );
   return (
     <div>
       <Modal
-        title={props.isCreateModal ? "Add Task" : "Edit Task"}
+        title={title}
         open={props.isEditModalOpen}
         onCancel={props.handleCancel}
         okButtonProps={{ hidden: true }}
         cancelButtonProps={{ hidden: true }}
         destroyOnClose
       >
-        <Form
-          initialValues={props.task}
-          onFinish={props.isCreateModal ? createJob : updateJob}
-        >
+        <Form initialValues={props.task} onFinish={handleFinish}>
           <div className="mb-[12px]">
             <p>Task name</p>
             <Form.Item
