@@ -30,3 +30,7 @@
   border-color: #ff4d4f !important;
   background: #fff ;
 }
+
+p {
+  margin-bottom: 0 !important;
+}

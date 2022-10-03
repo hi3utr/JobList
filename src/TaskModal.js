@@ -22,6 +22,7 @@ export const TaskModal = (props) => {
   }
 
   function updateJob(data) {
+    const jobId = props.jobId;
     setOnSave(true);
     var options = {
       method: "PATCH",
@@ -31,9 +32,7 @@ export const TaskModal = (props) => {
       body: JSON.stringify(data),
     };
     fetch(
-      "https://630eca933792563418817e08.mockapi.io/products" +
-        "/" +
-        props.jobId,
+      "https://630eca933792563418817e08.mockapi.io/products" + "/" + jobId,
       options
     ).then(function (response) {
       setOnSave(false);

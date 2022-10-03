@@ -1,5 +1,11 @@
 import { Space, Table, Tag, Modal } from "antd";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import {
+  ExclamationCircleOutlined,
+  BookOutlined,
+  BookFilled,
+  EditOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import React, { useState, useContext } from "react";
 import * as dayjs from "dayjs";
 import moment from "moment";
@@ -14,6 +20,7 @@ const TableList = (props) => {
     created: "",
     deadline: "",
     status: "",
+    key: "",
   });
   const tags = [
     {
@@ -91,17 +98,26 @@ const TableList = (props) => {
       title: "ACTION",
       key: "action",
       render: (record) => (
-        <Space size="middle">
-          <button onClick={() => showEditModal(record)}>
-            <img src="assets/icons/edit.png" alt="" />
+        <Space size="middle" className="text-[20px]">
+          <button className="flex" onClick={() => showEditModal(record)}>
+            <EditOutlined />
           </button>
 
           <button
+            className="flex"
             onClick={() => {
               showDeleteConfirm(record);
             }}
           >
-            <img src="assets/icons/delete.png" alt="" />
+            <DeleteOutlined />
+          </button>
+          <button
+            className="flex"
+            onClick={() => {
+              updateBookmark(record);
+            }}
+          >
+            {!record.bookmark ? <BookOutlined /> : <BookFilled />}
           </button>
         </Space>
       ),
@@ -124,7 +140,7 @@ const TableList = (props) => {
   }
   const showDeleteConfirm = (record) => {
     confirm({
-      title: "Are you sure delete this task?",
+      title: "Are you sure to delete this task?",
       icon: <ExclamationCircleOutlined />,
       content: "This action cannot be undone",
       okText: "Yes",
@@ -136,6 +152,38 @@ const TableList = (props) => {
         handleDeleteJob(record);
       },
       onCancel() {},
+    });
+  };
+
+  const updateBookmark = (record) => {
+    const newRecord = {
+      ...record,
+      bookmark: !record.bookmark,
+    };
+    var options = {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newRecord),
+    };
+    fetch(
+      "https://630eca933792563418817e08.mockapi.io/products" +
+        "/" +
+        newRecord.key,
+      options
+    ).then(function (response) {
+      const index = props.jobs.findIndex((job) => job.key === newRecord.key);
+
+      if (index > -1) {
+        props.setJobs((prev) => {
+          const temp = [...prev];
+          temp.splice(index, 1, newRecord);
+          return temp;
+        });
+      }
+
+      return response.json();
     });
   };
   return (

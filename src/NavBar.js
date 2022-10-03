@@ -4,6 +4,7 @@ import { TaskModal } from "./TaskModal";
 import moment from "moment";
 import { SearchContext } from "./Provider/SearchProvider";
 import { debounce } from "lodash";
+import { BookOutlined } from "@ant-design/icons";
 
 export const NavBar = (props) => {
   const [isCreateModal, setIsCreateModal] = useState(true);
@@ -45,7 +46,7 @@ export const NavBar = (props) => {
   return (
     <div className="flex justify-between px-[26px] py-[24px] items-center">
       <div className="text-[#5E5873] font-medium">Task List</div>
-      <div className="flex">
+      <div className="flex items-center">
         <div className="relative">
           <input
             className="border rounded-[5px] mr-[27px] py-[8px] pl-[12px] text-[12px] pr-[30px]"
@@ -64,9 +65,12 @@ export const NavBar = (props) => {
         <button
           type="submit"
           onClick={showEditModal}
-          className="bg-[#3C6D73] rounded-[5px] px-[30px] py-[8px] text-white text-[12px] font-medium"
+          className="bg-[#3C6D73] rounded-[5px] mr-[27px] px-[30px] py-[8px] text-white text-[12px] font-medium"
         >
           + Add Task
+        </button>
+        <button className="text-[25px] flex">
+          <BookOutlined />
         </button>
         <TaskModal
           isCreateModal={isCreateModal}
