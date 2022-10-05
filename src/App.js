@@ -8,16 +8,22 @@ import { Bookmark } from "./Bookmark";
 import { Task } from "./Task";
 import Login from "./Login";
 import Register from "./Register";
+import { SearchProvider } from "./Provider/SearchProvider";
+import { AuthProvider } from "./Provider/AuthProvider";
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Task />}></Route>
-        <Route path="/bookmarks" element={<Bookmark />}></Route>
-        <Route path="/login" element={<Login />}></Route>
-        <Route path="/register" element={<Register />}></Route>
-      </Routes>
+      <AuthProvider>
+        <SearchProvider>
+          <Routes>
+            <Route path="/" element={<Task />}></Route>
+            <Route path="/bookmarks" element={<Bookmark />}></Route>
+            <Route path="/login" element={<Login />}></Route>
+            <Route path="/register" element={<Register />}></Route>
+          </Routes>
+        </SearchProvider>
+      </AuthProvider>
     </Router>
   );
 }

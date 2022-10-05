@@ -10,9 +10,11 @@ import {
   Row,
   Select,
 } from "antd";
+import { AuthContext } from "./Provider/AuthProvider";
+
 import axios from "axios";
 import { Link } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 const { Option } = Select;
 
 const formItemLayout = {
@@ -48,17 +50,21 @@ const tailFormItemLayout = {
 
 const Register = () => {
   const [form] = Form.useForm();
+  const { setToken } = useContext(AuthContext);
 
   const onFinish = (values) => {
-    const registerApi =
-      "https://test-strapi-vercel-production.up.railway.app/api/auth/local/register";
+    const registerApi = process.env.REACT_APP_API_URL + "/auth/local/register";
     axios
       .post(registerApi, {
         email: values.email,
         username: values.username,
         password: values.password,
       })
-      .then((response) => console.log("response", response.data));
+      .then((response) => {
+        const { jwt } = response.data;
+        localStorage.setItem("token", jwt);
+        setToken(jwt);
+      });
   };
 
   const prefixSelector = (

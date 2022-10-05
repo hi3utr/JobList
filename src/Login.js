@@ -1,19 +1,24 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input } from "antd";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { AuthContext } from "./Provider/AuthProvider";
 
 const Login = () => {
+  const { setToken } = useContext(AuthContext);
   const onFinish = (values) => {
-    const loginApi =
-      " https://test-strapi-vercel-production.up.railway.app/api/auth/local";
+    const loginApi = process.env.REACT_APP_API_URL + "/auth/local";
     axios
       .post(loginApi, {
         identifier: values.identifier,
         password: values.password,
       })
-      .then((response) => console.log("response", response.data));
+      .then((response) => {
+        const { jwt } = response.data;
+        localStorage.setItem("token", jwt);
+        setToken(jwt);
+      });
   };
 
   return (
@@ -67,10 +72,11 @@ const Login = () => {
           <Form.Item name="remember" valuePropName="checked" noStyle>
             <Checkbox>Remember me</Checkbox>
           </Form.Item>
-
-          <a className="login-form-forgot" href="">
-            Forgot password
-          </a>
+          {/* <div>
+            <a className="login-form-forgot" href="">
+              Forgot password
+            </a>
+          </div> */}
         </Form.Item>
 
         <Form.Item>
@@ -81,7 +87,9 @@ const Login = () => {
           >
             Log in
           </Button>
-          Or <Link to="/register">register now!</Link>
+          <div>
+            Or <Link to="/register">register now!</Link>
+          </div>
         </Form.Item>
       </Form>
     </div>

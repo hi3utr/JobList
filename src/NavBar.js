@@ -1,13 +1,52 @@
 import React, { useState, useContext, useRef } from "react";
-import { Button, Modal, DatePicker, Space, Select, Form } from "antd";
+import {
+  Button,
+  Modal,
+  DatePicker,
+  Space,
+  Select,
+  Form,
+  Dropdown,
+  Menu,
+  message,
+} from "antd";
 import { TaskModal } from "./TaskModal";
 import moment from "moment";
 import { SearchContext } from "./Provider/SearchProvider";
+import { AuthContext } from "./Provider/AuthProvider";
 import { debounce } from "lodash";
-import { BookOutlined } from "@ant-design/icons";
+import {
+  BookOutlined,
+  DownOutlined,
+  UserOutlined,
+  LogoutOutlined,
+} from "@ant-design/icons";
 import { Link } from "react-router-dom";
 
 export const NavBar = (props) => {
+  const { setToken } = useContext(AuthContext);
+  const handleButtonClick = (e) => {
+    message.info("Click on left button.");
+    console.log("click left button", e);
+  };
+
+  const handleMenuClick = (e) => {
+    message.info("Logged out");
+    setToken("");
+  };
+
+  const menu = (
+    <Menu
+      onClick={handleMenuClick}
+      items={[
+        {
+          label: "Logout",
+          key: "1",
+          icon: <LogoutOutlined />,
+        },
+      ]}
+    />
+  );
   const [isCreateModal, setIsCreateModal] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [task, setTask] = useState({
@@ -68,15 +107,20 @@ export const NavBar = (props) => {
         <button
           type="submit"
           onClick={showEditModal}
-          className="bg-[#3C6D73] rounded-[5px] mr-[27px] px-[30px] py-[8px] text-white text-[12px] font-medium"
+          className="bg-[#3C6D73] rounded-[5px] px-[30px] py-[8px] text-white text-[12px] font-medium"
         >
           + Add Task
         </button>
         <Link to="/bookmarks">
-          <button className="text-[25px] flex">
+          <button className="text-[25px] flex ml-[27px]">
             <BookOutlined />
           </button>
         </Link>
+        <Dropdown overlay={menu} placement="bottom">
+          <div className="flex text-[25px] ml-[22px]">
+            <UserOutlined />
+          </div>
+        </Dropdown>
         <TaskModal
           isCreateModal={isCreateModal}
           isEditModalOpen={isEditModalOpen}
