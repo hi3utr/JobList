@@ -11,38 +11,45 @@ import * as dayjs from "dayjs";
 import moment from "moment";
 import { TaskModal } from "./TaskModal";
 import { SearchContext } from "./Provider/SearchProvider";
+import { AuthContext } from "./Provider/AuthProvider";
 
 const BookmarkList = (props) => {
+  const { token } = useContext(AuthContext);
   const { searchTerm, setSearchTerm } = useContext(SearchContext);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [jobId, setJobId] = useState(0);
   const [task, setTask] = useState({
-    name: "",
-    created: "",
-    deadline: "",
+    title: "",
+    start_date: "",
+    end_date: "",
     status: "",
-    key: "",
+    id: "",
   });
   const tags = [
+    {
+      value: "to do",
+      color: "gray",
+    },
     {
       value: "done",
       color: "green",
     },
     {
-      value: "doing",
+      value: "in progress",
       color: "orange",
     },
     {
-      value: "fail",
+      value: "failed",
       color: "volcano",
     },
   ];
   const onChange = (date, dateString) => {};
   const showEditModal = (record) => {
+    setJobId(record.id);
     setTask({
       ...record,
-      deadline: moment(record.deadline),
-      created: moment(record.created),
-      status: record.status % 3,
+      end_date: moment(record.end_date),
+      start_date: moment(record.start_date),
     });
     setIsEditModalOpen(true);
   };
@@ -58,12 +65,12 @@ const BookmarkList = (props) => {
   const { confirm } = Modal;
 
   const getStatus = (status) => {
-    const tag = tags[status % 3];
+    const index = tags.findIndex((tag) => tag.value === status);
 
-    if (tag)
+    if (index > -1)
       return (
-        <Tag color={tag.color} key={tag}>
-          {tag.value.toUpperCase()}
+        <Tag color={tags[index].color} key={index}>
+          {status.toUpperCase()}
         </Tag>
       );
 
@@ -73,18 +80,18 @@ const BookmarkList = (props) => {
   const columns = [
     {
       title: "NAME",
-      dataIndex: "name",
+      dataIndex: "title",
       key: "name",
     },
     {
       title: "CREATED",
-      dataIndex: "created",
+      dataIndex: "start_date",
       key: "created",
       render: (text) => <p>{dayjs(text).format("DD/MM/YYYY")}</p>,
     },
     {
       title: "DEADLINE",
-      dataIndex: "deadline",
+      dataIndex: "end_date",
       key: "deadline",
       render: (text) => <p>{dayjs(text).format("DD/MM/YYYY")}</p>,
     },
@@ -129,9 +136,10 @@ const BookmarkList = (props) => {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     };
-    fetch(props.jobApi + "/" + record.key, options)
+    fetch(props.jobApi + "/" + record.id, options)
       .then((response) => {
         response.json();
         props.fetchApi();
@@ -156,24 +164,16 @@ const BookmarkList = (props) => {
   };
 
   const updateBookmark = (record) => {
-    const newRecord = {
-      ...record,
-      bookmark: !record.bookmark,
-    };
     var options = {
-      method: "PATCH",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(newRecord),
+      body: JSON.stringify({ data: { bookmark: !record.bookmark } }),
     };
-    fetch(
-      "https://630eca933792563418817e08.mockapi.io/products" +
-        "/" +
-        newRecord.key,
-      options
-    ).then(function (response) {
-      const index = props.jobs.findIndex((job) => job.key === newRecord.key);
+    fetch(props.jobApi + "/" + record.id, options).then(function (response) {
+      const index = props.jobs.findIndex((job) => job.id === record.id);
 
       if (index > -1) {
         props.setJobs((prev) => {
@@ -193,15 +193,17 @@ const BookmarkList = (props) => {
         dataSource={props.jobs}
         loading={props.loading}
       />
-      <TaskModal
-        jobApi={props.jobApi}
-        isEditModalOpen={isEditModalOpen}
-        handleOk={handleOk}
-        handleCancel={handleCancel}
-        task={task}
-        onChange={onChange}
-        jobId={task.key}
-      />
+      {isEditModalOpen && (
+        <TaskModal
+          jobApi={props.jobApi}
+          isEditModalOpen={isEditModalOpen}
+          handleOk={handleOk}
+          handleCancel={handleCancel}
+          task={task}
+          onChange={onChange}
+          jobId={jobId}
+        />
+      )}
     </div>
   );
 };

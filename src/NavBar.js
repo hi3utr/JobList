@@ -50,9 +50,9 @@ export const NavBar = (props) => {
   const [isCreateModal, setIsCreateModal] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [task, setTask] = useState({
-    name: "",
-    created: "",
-    deadline: "",
+    title: "",
+    start_date: moment(),
+    end_date: "",
     status: "",
   });
   const inputSearch = useRef();
@@ -65,8 +65,8 @@ export const NavBar = (props) => {
   const showEditModal = (record) => {
     setTask({
       ...record,
-      deadline: "",
-      created: moment(),
+      end_date: "",
+      start_date: moment(),
       status: "",
     });
     setIsEditModalOpen(true);

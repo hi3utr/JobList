@@ -3,22 +3,32 @@ import axios from "axios";
 import { SearchContext } from "./Provider/SearchProvider";
 import BookmarkList from "./BookmarkList";
 import { NavBar } from "./NavBar";
+import { AuthContext } from "./Provider/AuthProvider";
 
 export const Bookmark = () => {
+  const { token } = useContext(AuthContext);
   const { searchTerm, setSearchTerm } = useContext(SearchContext);
   const [loading, setLoading] = useState(true);
-  var jobApi = "https://630eca933792563418817e08.mockapi.io/products";
+  var jobApi = process.env.REACT_APP_API_URL + "/todo";
   const [jobs, setJobs] = useState([]);
   const fetchApi = (search) => {
     setLoading(true);
-    axios.get(jobApi, { params: { search, bookmark: true } }).then((res) => {
-      setJobs(res.data);
-      setLoading(false);
-    });
+    axios
+      .get(jobApi, {
+        params: { search, bookmark: true },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        setJobs(res.data.results);
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
-    fetchApi(searchTerm);
+    if (searchTerm) fetchApi(searchTerm);
+    else fetchApi();
   }, [searchTerm]);
   return (
     <div>

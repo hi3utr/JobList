@@ -1,7 +1,9 @@
 import { Space, Modal, Form, Select, DatePicker, Button } from "antd";
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useContext } from "react";
+import { AuthContext } from "./Provider/AuthProvider";
 
 export const TaskModal = (props) => {
+  const { token } = useContext(AuthContext);
   const [onSave, setOnSave] = useState(false);
   function createJob(data) {
     setOnSave(true);
@@ -9,36 +11,38 @@ export const TaskModal = (props) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({ data }),
     };
-    fetch("https://630eca933792563418817e08.mockapi.io/products", options).then(
-      function (response) {
-        setOnSave(false);
-        props.handleOk();
-        return response.json();
-      }
-    );
+    fetch(process.env.REACT_APP_API_URL + "/todo", options).then(function (
+      response
+    ) {
+      setOnSave(false);
+      props.handleOk();
+      return response.json();
+    });
   }
 
   function updateJob(data) {
     const jobId = props.jobId;
     setOnSave(true);
     var options = {
-      method: "PATCH",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({ data }),
     };
-    fetch(
-      "https://630eca933792563418817e08.mockapi.io/products" + "/" + jobId,
-      options
-    ).then(function (response) {
-      setOnSave(false);
-      props.handleOk();
-      return response.json();
-    });
+    fetch(process.env.REACT_APP_API_URL + "/todo/" + jobId, options).then(
+      function (response) {
+        console.log(response);
+        setOnSave(false);
+        props.handleOk();
+        return response.json();
+      }
+    );
   }
 
   const title = useMemo(() => {
@@ -67,7 +71,7 @@ export const TaskModal = (props) => {
           <div className="mb-[12px]">
             <p>Task name</p>
             <Form.Item
-              name="name"
+              name="title"
               rules={[
                 { required: true },
                 { type: "string", warningOnly: true },
@@ -84,7 +88,7 @@ export const TaskModal = (props) => {
           <div className="mb-[12px]">
             <p>Created</p>
             <Space style={{ width: "100%" }} direction="vertical">
-              <Form.Item name="created">
+              <Form.Item name="start_date">
                 <DatePicker disabled onChange={props.onChange} />
               </Form.Item>
             </Space>
@@ -93,7 +97,7 @@ export const TaskModal = (props) => {
             <p>Deadline</p>
             <Space style={{ width: "100%" }} direction="vertical">
               <Form.Item
-                name="deadline"
+                name="end_date"
                 rules={[
                   { required: true },
                   { type: "date", warningOnly: true },
@@ -110,9 +114,10 @@ export const TaskModal = (props) => {
             <p>Status</p>
             <Form.Item name="status" rules={[{ required: true }]}>
               <Select disabled={onSave ? true : false}>
-                <Select.Option value={0}>Done</Select.Option>
-                <Select.Option value={1}>Doing</Select.Option>
-                <Select.Option value={2}>Fail</Select.Option>
+                <Select.Option value={"to do"}>To Do</Select.Option>
+                <Select.Option value={"in progress"}>In Progress</Select.Option>
+                <Select.Option value={"done"}>Done</Select.Option>
+                <Select.Option value={"failed"}>Fail</Select.Option>
               </Select>
             </Form.Item>
           </div>
