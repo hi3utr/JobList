@@ -12,7 +12,7 @@ import moment from "moment";
 import { TaskModal } from "./TaskModal";
 import { SearchContext } from "./Provider/SearchProvider";
 
-const TableList = (props) => {
+const BookmarkList = (props) => {
   const { searchTerm, setSearchTerm } = useContext(SearchContext);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [task, setTask] = useState({
@@ -178,7 +178,7 @@ const TableList = (props) => {
       if (index > -1) {
         props.setJobs((prev) => {
           const temp = [...prev];
-          temp.splice(index, 1, newRecord);
+          temp.splice(index, 1);
           return temp;
         });
       }
@@ -206,4 +206,4 @@ const TableList = (props) => {
   );
 };
 
-export default TableList;
+export default BookmarkList;

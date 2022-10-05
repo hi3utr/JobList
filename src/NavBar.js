@@ -5,6 +5,7 @@ import moment from "moment";
 import { SearchContext } from "./Provider/SearchProvider";
 import { debounce } from "lodash";
 import { BookOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
 
 export const NavBar = (props) => {
   const [isCreateModal, setIsCreateModal] = useState(true);
@@ -45,7 +46,9 @@ export const NavBar = (props) => {
 
   return (
     <div className="flex justify-between px-[26px] py-[24px] items-center">
-      <div className="text-[#5E5873] font-medium">Task List</div>
+      <Link to="/">
+        <button className="text-[#5E5873] font-medium">Task List</button>
+      </Link>
       <div className="flex items-center">
         <div className="relative">
           <input
@@ -69,9 +72,11 @@ export const NavBar = (props) => {
         >
           + Add Task
         </button>
-        <button className="text-[25px] flex">
-          <BookOutlined />
-        </button>
+        <Link to="/bookmarks">
+          <button className="text-[25px] flex">
+            <BookOutlined />
+          </button>
+        </Link>
         <TaskModal
           isCreateModal={isCreateModal}
           isEditModalOpen={isEditModalOpen}
