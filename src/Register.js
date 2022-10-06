@@ -51,20 +51,24 @@ const tailFormItemLayout = {
 const Register = () => {
   const [form] = Form.useForm();
   const { setToken } = useContext(AuthContext);
+  const [errMsg, setErrMsg] = useState("");
+  const onFinish = async (values) => {
+    try {
+      const registerApi =
+        process.env.REACT_APP_API_URL + "/auth/local/register";
 
-  const onFinish = (values) => {
-    const registerApi = process.env.REACT_APP_API_URL + "/auth/local/register";
-    axios
-      .post(registerApi, {
+      const response = await axios.post(registerApi, {
         email: values.email,
         username: values.username,
         password: values.password,
-      })
-      .then((response) => {
-        const { jwt } = response.data;
-        localStorage.setItem("token", jwt);
-        setToken(jwt);
       });
+
+      const { jwt } = response.data;
+      localStorage.setItem("token", jwt);
+      setToken(jwt);
+    } catch (error) {
+      setErrMsg(error.response.data.error.message);
+    }
   };
 
   const prefixSelector = (
@@ -199,6 +203,9 @@ const Register = () => {
         >
           <Input />
         </Form.Item>
+        {errMsg && (
+          <p className="flex justify-center text-red-600 mt-[10px]">{errMsg}</p>
+        )}
         <div className="flex justify-center gap-[4px] mb-[10px]">
           Already have account ? Back to <Link to="/login">Login</Link>
         </div>

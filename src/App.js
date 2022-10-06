@@ -8,6 +8,7 @@ import { Bookmark } from "./Bookmark";
 import { Task } from "./Task";
 import Login from "./Login";
 import Register from "./Register";
+import { Profile } from "./Profile";
 import { SearchProvider } from "./Provider/SearchProvider";
 import { AuthProvider } from "./Provider/AuthProvider";
 
@@ -21,6 +22,7 @@ function App() {
             <Route path="/bookmarks" element={<Bookmark />}></Route>
             <Route path="/login" element={<Login />}></Route>
             <Route path="/register" element={<Register />}></Route>
+            <Route path="/profiles" element={<Profile />}></Route>
           </Routes>
         </SearchProvider>
       </AuthProvider>

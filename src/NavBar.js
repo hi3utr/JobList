@@ -22,26 +22,37 @@ import {
   LogoutOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import MenuItem from "antd/lib/menu/MenuItem";
+import { useNavigate } from "react-router-dom";
 
 export const NavBar = (props) => {
   const { setToken } = useContext(AuthContext);
-  const handleButtonClick = (e) => {
-    message.info("Click on left button.");
-    console.log("click left button", e);
-  };
+  const navigate = useNavigate();
 
-  const handleMenuClick = (e) => {
+  const handleLogout = (e) => {
     message.info("Logged out");
     setToken("");
+    localStorage.removeItem("token");
   };
 
   const menu = (
     <Menu
-      onClick={handleMenuClick}
+      onClick={({ key }) => {
+        if (key === "2") {
+          handleLogout();
+        } else {
+          navigate("/profiles");
+        }
+      }}
       items={[
         {
-          label: "Logout",
+          label: "Profile",
           key: "1",
+          icon: <UserOutlined />,
+        },
+        {
+          label: "Logout",
+          key: "2",
           icon: <LogoutOutlined />,
         },
       ]}

@@ -5,7 +5,7 @@ import { AuthContext } from "./Provider/AuthProvider";
 export const TaskModal = (props) => {
   const { token } = useContext(AuthContext);
   const [onSave, setOnSave] = useState(false);
-  function createJob(data) {
+  const createJob = (data) => {
     setOnSave(true);
     var options = {
       method: "POST",
@@ -22,9 +22,9 @@ export const TaskModal = (props) => {
       props.handleOk();
       return response.json();
     });
-  }
+  };
 
-  function updateJob(data) {
+  const updateJob = (data) => {
     const jobId = props.jobId;
     setOnSave(true);
     var options = {
@@ -43,7 +43,7 @@ export const TaskModal = (props) => {
         return response.json();
       }
     );
-  }
+  };
 
   const title = useMemo(() => {
     if (props.isCreateModal) return "Add Task";

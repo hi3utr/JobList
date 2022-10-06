@@ -186,6 +186,7 @@ const BookmarkList = (props) => {
       return response.json();
     });
   };
+
   return (
     <div>
       <Table

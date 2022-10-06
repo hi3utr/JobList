@@ -1,24 +1,26 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Input } from "antd";
+import { Button, Checkbox, Form, Input, message } from "antd";
 import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "./Provider/AuthProvider";
 
 const Login = () => {
+  const [errMsg, setErrMsg] = useState("");
   const { setToken } = useContext(AuthContext);
-  const onFinish = (values) => {
-    const loginApi = process.env.REACT_APP_API_URL + "/auth/local";
-    axios
-      .post(loginApi, {
+  const onFinish = async (values) => {
+    try {
+      const loginApi = process.env.REACT_APP_API_URL + "/auth/local";
+      const response = await axios.post(loginApi, {
         identifier: values.identifier,
         password: values.password,
-      })
-      .then((response) => {
-        const { jwt } = response.data;
-        localStorage.setItem("token", jwt);
-        setToken(jwt);
       });
+      const { jwt } = response.data;
+      localStorage.setItem("token", jwt);
+      setToken(jwt);
+    } catch (error) {
+      setErrMsg(error.response.data.error.message);
+    }
   };
 
   return (
@@ -68,22 +70,16 @@ const Login = () => {
             placeholder="Password"
           />
         </Form.Item>
-        <Form.Item>
-          <Form.Item name="remember" valuePropName="checked" noStyle>
-            <Checkbox>Remember me</Checkbox>
-          </Form.Item>
-          {/* <div>
-            <a className="login-form-forgot" href="">
-              Forgot password
-            </a>
-          </div> */}
-        </Form.Item>
 
+        <Form.Item name="remember" valuePropName="checked" noStyle>
+          <Checkbox>Remember me</Checkbox>
+        </Form.Item>
+        {errMsg && <p className="text-red-600 mt-[10px]">{errMsg}</p>}
         <Form.Item>
           <Button
             type="primary"
             htmlType="submit"
-            className="login-form-button"
+            className="login-form-button mt-[10px]"
           >
             Log in
           </Button>

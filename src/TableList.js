@@ -131,7 +131,7 @@ const TableList = (props) => {
     },
   ];
 
-  function handleDeleteJob(record) {
+  const handleDeleteJob = (record) => {
     var options = {
       method: "DELETE",
       headers: {
@@ -145,7 +145,7 @@ const TableList = (props) => {
         props.fetchApi();
       })
       .then(function () {});
-  }
+  };
   const showDeleteConfirm = (record) => {
     confirm({
       title: "Are you sure to delete this task?",
