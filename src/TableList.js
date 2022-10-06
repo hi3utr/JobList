@@ -131,7 +131,7 @@ const TableList = (props) => {
     },
   ];
 
-  const handleDeleteJob = (record) => {
+  const handleDeleteJob = async (record) => {
     var options = {
       method: "DELETE",
       headers: {
@@ -139,12 +139,9 @@ const TableList = (props) => {
         Authorization: `Bearer ${token}`,
       },
     };
-    fetch(props.jobApi + "/" + record.id, options)
-      .then((response) => {
-        response.json();
-        props.fetchApi();
-      })
-      .then(function () {});
+    await fetch(props.jobApi + "/" + record.id, options);
+
+    props.fetchApi();
   };
   const showDeleteConfirm = (record) => {
     confirm({

@@ -5,7 +5,7 @@ import { AuthContext } from "./Provider/AuthProvider";
 export const TaskModal = (props) => {
   const { token } = useContext(AuthContext);
   const [onSave, setOnSave] = useState(false);
-  const createJob = (data) => {
+  const createJob = async (data) => {
     setOnSave(true);
     var options = {
       method: "POST",
@@ -15,16 +15,12 @@ export const TaskModal = (props) => {
       },
       body: JSON.stringify({ data }),
     };
-    fetch(process.env.REACT_APP_API_URL + "/todo", options).then(function (
-      response
-    ) {
-      setOnSave(false);
-      props.handleOk();
-      return response.json();
-    });
+    await fetch(process.env.REACT_APP_API_URL + "/todo", options);
+    setOnSave(false);
+    props.handleOk();
   };
 
-  const updateJob = (data) => {
+  const updateJob = async (data) => {
     const jobId = props.jobId;
     setOnSave(true);
     var options = {
@@ -35,14 +31,9 @@ export const TaskModal = (props) => {
       },
       body: JSON.stringify({ data }),
     };
-    fetch(process.env.REACT_APP_API_URL + "/todo/" + jobId, options).then(
-      function (response) {
-        console.log(response);
-        setOnSave(false);
-        props.handleOk();
-        return response.json();
-      }
-    );
+    await fetch(process.env.REACT_APP_API_URL + "/todo/" + jobId, options);
+    setOnSave(false);
+    props.handleOk();
   };
 
   const title = useMemo(() => {

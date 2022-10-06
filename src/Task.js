@@ -12,19 +12,17 @@ export const Task = () => {
   const { searchTerm, setSearchTerm } = useContext(SearchContext);
   var jobApi = process.env.REACT_APP_API_URL + "/todo";
   const [jobs, setJobs] = useState([]);
-  const fetchApi = (search) => {
+  const fetchApi = async (search) => {
     setLoading(true);
-    axios
-      .get(jobApi, {
-        params: { search },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setJobs(res.data.results);
-        setLoading(false);
-      });
+    const res = await axios.get(jobApi, {
+      params: { search },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    setJobs(res.data.results);
+    setLoading(false);
   };
 
   useEffect(() => {

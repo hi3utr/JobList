@@ -16,7 +16,7 @@ export const Profile = () => {
   const { setToken } = useContext(AuthContext);
   const [users, setUsers] = useState({});
   const { token } = useContext(AuthContext);
-  const changePassword = (data) => {
+  const changePassword = async (data) => {
     var options = {
       method: "POST",
       headers: {
@@ -29,30 +29,26 @@ export const Profile = () => {
         passwordConfirmation: data.confirm_password,
       }),
     };
-    fetch(
+    await fetch(
       process.env.REACT_APP_API_URL + "/auth/change-password",
       options
-    ).then(function (response) {
-      return response.json();
-    });
+    );
   };
-  const handleFinish = (data) => {
-    changePassword(data);
+  const handleFinish = async (data) => {
+    await changePassword(data);
     message.info("Change password successfully");
     message.info("Logged out");
     setToken("");
     localStorage.removeItem("token");
   };
-  const fetchApi = () => {
-    axios
-      .get(jobApi, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setUsers(res.data);
-      });
+  const fetchApi = async () => {
+    const response = await axios.get(jobApi, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    setUsers(response.data);
   };
 
   useEffect(() => {
