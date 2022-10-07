@@ -1,4 +1,5 @@
 import { Space, Modal, Form, Select, DatePicker, Button } from "antd";
+import moment from "moment";
 import React, { useState, useMemo, useCallback, useContext } from "react";
 import { AuthContext } from "./Provider/AuthProvider";
 
@@ -57,6 +58,8 @@ export const TaskModal = (props) => {
         okButtonProps={{ hidden: true }}
         cancelButtonProps={{ hidden: true }}
         destroyOnClose
+        footer={null}
+        style={{ borderRadius: "20px", overflow: "auto" }}
       >
         <Form initialValues={props.task} onFinish={handleFinish}>
           <div className="mb-[12px]">
@@ -95,6 +98,9 @@ export const TaskModal = (props) => {
                 ]}
               >
                 <DatePicker
+                  disabledDate={(current) => {
+                    return current && current < moment().subtract(1, "days");
+                  }}
                   disabled={onSave ? true : false}
                   onChange={props.onChange}
                 />

@@ -28,7 +28,7 @@ const TableList = (props) => {
   const tags = [
     {
       value: "to do",
-      color: "gray",
+      color: "blue",
     },
     {
       value: "done",
@@ -40,7 +40,7 @@ const TableList = (props) => {
     },
     {
       value: "failed",
-      color: "volcano",
+      color: "red",
     },
   ];
   const onChange = (date, dateString) => {};
@@ -204,7 +204,6 @@ const TableList = (props) => {
           task={task}
           onChange={onChange}
           jobId={jobId}
-          style={{ borderRadius: "20px", overflow: "hidden" }}
         />
       )}
     </div>

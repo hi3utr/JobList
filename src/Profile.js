@@ -12,6 +12,7 @@ import { NavBar } from "./NavBar";
 import { isEmpty } from "lodash";
 
 export const Profile = () => {
+  const [loading, setLoading] = useState(true);
   var jobApi = process.env.REACT_APP_API_URL + "/users/me";
   const { setToken } = useContext(AuthContext);
   const [users, setUsers] = useState({});
@@ -42,6 +43,7 @@ export const Profile = () => {
     localStorage.removeItem("token");
   };
   const fetchApi = async () => {
+    setLoading(true);
     const response = await axios.get(jobApi, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -49,6 +51,7 @@ export const Profile = () => {
     });
 
     setUsers(response.data);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -76,6 +79,7 @@ export const Profile = () => {
               borderRadius: "20px",
               overflow: "hidden",
             }}
+            loading={loading}
           >
             <Form
               name="normal_login"
@@ -107,6 +111,7 @@ export const Profile = () => {
             borderRadius: "20px",
             overflow: "hidden",
           }}
+          loading={loading}
         >
           <Form
             name="change_password"
@@ -125,7 +130,7 @@ export const Profile = () => {
             >
               <Input.Password
                 prefix={<KeyOutlined className="site-form-item-icon" />}
-                placeholder="Old password"
+                placeholder="Please enter your current password"
               />
             </Form.Item>
             <Form.Item
@@ -141,7 +146,7 @@ export const Profile = () => {
             >
               <Input.Password
                 prefix={<KeyOutlined className="site-form-item-icon" />}
-                placeholder="New password"
+                placeholder="Please enter your new password"
               />
             </Form.Item>
             <Form.Item
@@ -171,7 +176,7 @@ export const Profile = () => {
             >
               <Input.Password
                 prefix={<KeyOutlined className="site-form-item-icon" />}
-                placeholder="Conirm your password"
+                placeholder="Please confirm your new password"
               />
             </Form.Item>
             <Button type="primary" htmlType="submit">

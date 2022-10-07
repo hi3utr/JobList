@@ -56,6 +56,7 @@ export const NavBar = (props) => {
           icon: <LogoutOutlined />,
         },
       ]}
+      style={{ borderRadius: "10px", overflow: "hidden" }}
     />
   );
   const [isCreateModal, setIsCreateModal] = useState(true);
@@ -97,7 +98,9 @@ export const NavBar = (props) => {
   return (
     <div className="flex justify-between px-[26px] py-[24px] items-center">
       <Link to="/">
-        <button className="text-[#5E5873] font-medium">Task List</button>
+        <button className="text-[#5E5873] text-lg font-medium">
+          Task List
+        </button>
       </Link>
       <div className="flex items-center">
         <div className="relative">
@@ -127,8 +130,8 @@ export const NavBar = (props) => {
             <BookOutlined />
           </button>
         </Link>
-        <Dropdown overlay={menu} placement="bottom">
-          <div className="flex text-[25px] ml-[22px]">
+        <Dropdown overlay={menu} placement="bottomRight">
+          <div className="flex text-[25px] ml-[22px] cursor-pointer">
             <UserOutlined />
           </div>
         </Dropdown>
