@@ -73,6 +73,8 @@ export const Profile = () => {
             title="User Info"
             style={{
               width: "50vw",
+              borderRadius: "20px",
+              overflow: "hidden",
             }}
           >
             <Form
@@ -102,6 +104,8 @@ export const Profile = () => {
           title="Change Password"
           style={{
             width: "50vw",
+            borderRadius: "20px",
+            overflow: "hidden",
           }}
         >
           <Form
@@ -170,7 +174,9 @@ export const Profile = () => {
                 placeholder="Conirm your password"
               />
             </Form.Item>
-            <Button htmlType="submit">Change Password</Button>
+            <Button type="primary" htmlType="submit">
+              Change Password
+            </Button>
           </Form>
         </Card>
       </div>

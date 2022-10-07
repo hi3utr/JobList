@@ -193,6 +193,7 @@ const TableList = (props) => {
         columns={columns}
         dataSource={props.jobs}
         loading={props.loading}
+        style={{ borderRadius: "20px", overflow: "hidden" }}
       />
       {isEditModalOpen && (
         <TaskModal
@@ -203,6 +204,7 @@ const TableList = (props) => {
           task={task}
           onChange={onChange}
           jobId={jobId}
+          style={{ borderRadius: "20px", overflow: "hidden" }}
         />
       )}
     </div>
