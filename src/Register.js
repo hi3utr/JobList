@@ -132,6 +132,8 @@ const Register = () => {
         }}
         scrollToFirstError
       >
+        <h1 className="text-[30px] text-center">Sign Up</h1>
+
         <Form.Item
           name="email"
           label="E-mail"

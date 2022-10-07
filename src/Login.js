@@ -41,6 +41,7 @@ const Login = () => {
         }}
         onFinish={onFinish}
       >
+        <h1 className="text-[30px]">Sign In</h1>
         <Form.Item
           name="identifier"
           rules={[
