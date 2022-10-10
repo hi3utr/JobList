@@ -13,7 +13,7 @@ import { TaskModal } from "./TaskModal";
 import { SearchContext } from "./Provider/SearchProvider";
 import { AuthContext } from "./Provider/AuthProvider";
 
-const TableList = (props) => {
+const BookmarkList = (props) => {
   const { token } = useContext(AuthContext);
   const { searchTerm, setSearchTerm } = useContext(SearchContext);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -28,7 +28,7 @@ const TableList = (props) => {
   const tags = [
     {
       value: "to do",
-      color: "blue",
+      color: "gray",
     },
     {
       value: "done",
@@ -40,7 +40,7 @@ const TableList = (props) => {
     },
     {
       value: "failed",
-      color: "red",
+      color: "volcano",
     },
   ];
   const onChange = (date, dateString) => {};
@@ -131,7 +131,7 @@ const TableList = (props) => {
     },
   ];
 
-  const handleDeleteJob = async (record) => {
+  function handleDeleteJob(record) {
     var options = {
       method: "DELETE",
       headers: {
@@ -139,10 +139,13 @@ const TableList = (props) => {
         Authorization: `Bearer ${token}`,
       },
     };
-    await fetch(props.jobApi + "/" + record.id, options);
-
-    props.fetchApi();
-  };
+    fetch(props.jobApi + "/" + record.id, options)
+      .then((response) => {
+        response.json();
+        props.fetchApi();
+      })
+      .then(function () {});
+  }
   const showDeleteConfirm = (record) => {
     confirm({
       title: "Are you sure to delete this task?",
@@ -174,12 +177,8 @@ const TableList = (props) => {
 
       if (index > -1) {
         props.setJobs((prev) => {
-          const newRecord = {
-            ...record,
-            bookmark: !record.bookmark,
-          };
           const temp = [...prev];
-          temp.splice(index, 1, newRecord);
+          temp.splice(index, 1);
           return temp;
         });
       }
@@ -187,13 +186,13 @@ const TableList = (props) => {
       return response.json();
     });
   };
+
   return (
     <div>
       <Table
         columns={columns}
         dataSource={props.jobs}
         loading={props.loading}
-        style={{ borderRadius: "20px", overflow: "hidden" }}
       />
       {isEditModalOpen && (
         <TaskModal
@@ -210,4 +209,4 @@ const TableList = (props) => {
   );
 };
 
-export default TableList;
+export default BookmarkList;

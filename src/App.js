@@ -2,33 +2,31 @@ import "./App.css";
 import TableList from "./TableList";
 import { NavBar } from "./NavBar";
 import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
 import { SearchContext } from "./Provider/SearchProvider";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { Bookmark } from "./Bookmark";
+import { Task } from "./Task";
+import Login from "./Login";
+import Register from "./Register";
+import { Profile } from "./Profile";
+import { SearchProvider } from "./Provider/SearchProvider";
+import { AuthProvider } from "./Provider/AuthProvider";
+
 function App() {
-  const { searchTerm, setSearchTerm } = useContext(SearchContext);
-  var jobApi = "https://630eca933792563418817e08.mockapi.io/products";
-  const [jobs, setJobs] = useState([]);
-  const fetchApi = (search) =>
-    axios.get(jobApi, { params: { search } }).then((res) => {
-      setJobs(res.data);
-    });
-
-  useEffect(() => {
-    fetchApi(searchTerm);
-  }, [searchTerm]);
-
   return (
-    <div className="App">
-      <NavBar fetchApi={fetchApi} />
-      {jobs.length > 0 && (
-        <TableList
-          jobs={jobs}
-          setJobs={setJobs}
-          jobApi={jobApi}
-          fetchApi={fetchApi}
-        />
-      )}
-    </div>
+    <Router>
+      <AuthProvider>
+        <SearchProvider>
+          <Routes>
+            <Route path="/" element={<Task />}></Route>
+            <Route path="/bookmarks" element={<Bookmark />}></Route>
+            <Route path="/login" element={<Login />}></Route>
+            <Route path="/register" element={<Register />}></Route>
+            <Route path="/profiles" element={<Profile />}></Route>
+          </Routes>
+        </SearchProvider>
+      </AuthProvider>
+    </Router>
   );
 }
 export default App;
