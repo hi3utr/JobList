@@ -15,6 +15,7 @@ import { AuthContext } from "./Provider/AuthProvider";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import React, { useState, useContext } from "react";
+import { registerFeat } from "./services/AuthService";
 const { Option } = Select;
 
 const formItemLayout = {
@@ -54,14 +55,7 @@ const Register = () => {
   const [errMsg, setErrMsg] = useState("");
   const onFinish = async (values) => {
     try {
-      const registerApi =
-        process.env.REACT_APP_API_URL + "/auth/local/register";
-
-      const response = await axios.post(registerApi, {
-        email: values.email,
-        username: values.username,
-        password: values.password,
-      });
+      const response = await registerFeat(values);
 
       const { jwt } = response.data;
       localStorage.setItem("token", jwt);
@@ -71,46 +65,6 @@ const Register = () => {
     }
   };
 
-  const prefixSelector = (
-    <Form.Item name="prefix" noStyle>
-      <Select
-        style={{
-          width: 70,
-        }}
-      >
-        <Option value="86">+86</Option>
-        <Option value="87">+87</Option>
-      </Select>
-    </Form.Item>
-  );
-  const suffixSelector = (
-    <Form.Item name="suffix" noStyle>
-      <Select
-        style={{
-          width: 70,
-        }}
-      >
-        <Option value="USD">$</Option>
-        <Option value="CNY">¥</Option>
-      </Select>
-    </Form.Item>
-  );
-  const [autoCompleteResult, setAutoCompleteResult] = useState([]);
-
-  const onWebsiteChange = (value) => {
-    if (!value) {
-      setAutoCompleteResult([]);
-    } else {
-      setAutoCompleteResult(
-        [".com", ".org", ".net"].map((domain) => `${value}${domain}`)
-      );
-    }
-  };
-
-  const websiteOptions = autoCompleteResult.map((website) => ({
-    label: website,
-    value: website,
-  }));
   return (
     <div
       style={{

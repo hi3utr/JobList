@@ -4,7 +4,8 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { SearchContext } from "./Provider/SearchProvider";
 import { AuthContext } from "./Provider/AuthProvider";
-
+import Instance from "./AxiosInstance";
+import { getTaskList } from "./services/TaskService";
 export const Task = () => {
   const [loading, setLoading] = useState(true);
   const { token } = useContext(AuthContext);
@@ -14,12 +15,7 @@ export const Task = () => {
   const [jobs, setJobs] = useState([]);
   const fetchApi = async (search) => {
     setLoading(true);
-    const res = await axios.get(jobApi, {
-      params: { search },
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await getTaskList(search);
 
     setJobs(res.data.results);
     setLoading(false);

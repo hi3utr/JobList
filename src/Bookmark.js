@@ -4,6 +4,7 @@ import { SearchContext } from "./Provider/SearchProvider";
 import BookmarkList from "./BookmarkList";
 import { NavBar } from "./NavBar";
 import { AuthContext } from "./Provider/AuthProvider";
+import { getBookmarkList } from "./services/TaskService";
 
 export const Bookmark = () => {
   const { token } = useContext(AuthContext);
@@ -11,19 +12,11 @@ export const Bookmark = () => {
   const [loading, setLoading] = useState(true);
   var jobApi = process.env.REACT_APP_API_URL + "/todo";
   const [jobs, setJobs] = useState([]);
-  const fetchApi = (search) => {
+  const fetchApi = async (search) => {
     setLoading(true);
-    axios
-      .get(jobApi, {
-        params: { search, bookmark: true },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setJobs(res.data.results);
-        setLoading(false);
-      });
+    const res = await getBookmarkList(search);
+    setJobs(res.data.results);
+    setLoading(false);
   };
 
   useEffect(() => {

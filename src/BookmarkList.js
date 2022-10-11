@@ -12,6 +12,7 @@ import moment from "moment";
 import { TaskModal } from "./TaskModal";
 import { SearchContext } from "./Provider/SearchProvider";
 import { AuthContext } from "./Provider/AuthProvider";
+import { deleteTask, updateBookmarkList } from "./services/TaskService";
 
 const BookmarkList = (props) => {
   const { token } = useContext(AuthContext);
@@ -131,21 +132,10 @@ const BookmarkList = (props) => {
     },
   ];
 
-  function handleDeleteJob(record) {
-    var options = {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    };
-    fetch(props.jobApi + "/" + record.id, options)
-      .then((response) => {
-        response.json();
-        props.fetchApi();
-      })
-      .then(function () {});
-  }
+  const handleDeleteJob = async (record) => {
+    await deleteTask(record);
+    await props.fetchApi(searchTerm);
+  };
   const showDeleteConfirm = (record) => {
     confirm({
       title: "Are you sure to delete this task?",
@@ -163,28 +153,19 @@ const BookmarkList = (props) => {
     });
   };
 
-  const updateBookmark = (record) => {
-    var options = {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ data: { bookmark: !record.bookmark } }),
-    };
-    fetch(props.jobApi + "/" + record.id, options).then(function (response) {
-      const index = props.jobs.findIndex((job) => job.id === record.id);
+  const updateBookmark = async (record) => {
+    const response = await updateBookmarkList(record);
+    const index = props.jobs.findIndex((job) => job.id === record.id);
 
-      if (index > -1) {
-        props.setJobs((prev) => {
-          const temp = [...prev];
-          temp.splice(index, 1);
-          return temp;
-        });
-      }
+    if (index > -1) {
+      props.setJobs((prev) => {
+        const temp = [...prev];
+        temp.splice(index, 1);
+        return temp;
+      });
+    }
 
-      return response.json();
-    });
+    return response.json();
   };
 
   return (

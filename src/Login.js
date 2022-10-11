@@ -4,6 +4,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "./Provider/AuthProvider";
+import { loginFeat } from "./services/AuthService";
 
 const Login = () => {
   const [errMsg, setErrMsg] = useState("");
@@ -11,10 +12,7 @@ const Login = () => {
   const onFinish = async (values) => {
     try {
       const loginApi = process.env.REACT_APP_API_URL + "/auth/local";
-      const response = await axios.post(loginApi, {
-        identifier: values.identifier,
-        password: values.password,
-      });
+      const response = await loginFeat(values);
       const { jwt } = response.data;
       localStorage.setItem("token", jwt);
       setToken(jwt);

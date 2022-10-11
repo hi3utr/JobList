@@ -71,9 +71,7 @@ export const NavBar = (props) => {
 
   const { searchTerm, setSearchTerm } = useContext(SearchContext);
 
-  const onChange = (date, dateString) => {
-    console.log(date, dateString);
-  };
+  const onChange = (date, dateString) => {};
   const showEditModal = (record) => {
     setTask({
       ...record,
