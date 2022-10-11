@@ -2,21 +2,15 @@ import { Space, Modal, Form, Select, DatePicker, Button } from "antd";
 import moment from "moment";
 import React, { useState, useMemo, useCallback, useContext } from "react";
 import { AuthContext } from "./Provider/AuthProvider";
+import { addTask, updateTask } from "./services/TaskService";
 
 export const TaskModal = (props) => {
   const { token } = useContext(AuthContext);
   const [onSave, setOnSave] = useState(false);
+
   const createJob = async (data) => {
     setOnSave(true);
-    var options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ data }),
-    };
-    await fetch(process.env.REACT_APP_API_URL + "/todo", options);
+    await addTask(data);
     setOnSave(false);
     props.handleOk();
   };
@@ -24,15 +18,7 @@ export const TaskModal = (props) => {
   const updateJob = async (data) => {
     const jobId = props.jobId;
     setOnSave(true);
-    var options = {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ data }),
-    };
-    await fetch(process.env.REACT_APP_API_URL + "/todo/" + jobId, options);
+    await updateTask(data, jobId);
     setOnSave(false);
     props.handleOk();
   };

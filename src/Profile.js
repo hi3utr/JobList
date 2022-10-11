@@ -10,6 +10,7 @@ import axios from "axios";
 import { AuthContext } from "./Provider/AuthProvider";
 import { NavBar } from "./NavBar";
 import { isEmpty } from "lodash";
+import { changePasswordFeat } from "./services/AuthService";
 
 export const Profile = () => {
   const [loading, setLoading] = useState(true);
@@ -17,30 +18,20 @@ export const Profile = () => {
   const { setToken } = useContext(AuthContext);
   const [users, setUsers] = useState({});
   const { token } = useContext(AuthContext);
+  const [errMsg, setErrMsg] = useState("");
   const changePassword = async (data) => {
-    var options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        currentPassword: data.old_password,
-        password: data.new_password,
-        passwordConfirmation: data.confirm_password,
-      }),
-    };
-    await fetch(
-      process.env.REACT_APP_API_URL + "/auth/change-password",
-      options
-    );
+    await changePasswordFeat(data);
   };
   const handleFinish = async (data) => {
-    await changePassword(data);
-    message.info("Change password successfully");
-    message.info("Logged out");
-    setToken("");
-    localStorage.removeItem("token");
+    try {
+      await changePassword(data);
+      message.info("Change password successfully");
+      message.info("Logged out");
+      setToken("");
+      localStorage.removeItem("token");
+    } catch (error) {
+      setErrMsg(error.response.data.error.message);
+    }
   };
   const fetchApi = async () => {
     setLoading(true);
@@ -179,6 +170,7 @@ export const Profile = () => {
                 placeholder="Please confirm your new password"
               />
             </Form.Item>
+            {errMsg && <p className="text-red-600">{errMsg}</p>}
             <Button type="primary" htmlType="submit">
               Change Password
             </Button>

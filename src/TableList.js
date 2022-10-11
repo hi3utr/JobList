@@ -12,6 +12,7 @@ import moment from "moment";
 import { TaskModal } from "./TaskModal";
 import { SearchContext } from "./Provider/SearchProvider";
 import { AuthContext } from "./Provider/AuthProvider";
+import { deleteTask, getTaskList } from "./services/TaskService";
 
 const TableList = (props) => {
   const { token } = useContext(AuthContext);
@@ -132,16 +133,8 @@ const TableList = (props) => {
   ];
 
   const handleDeleteJob = async (record) => {
-    var options = {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    };
-    await fetch(props.jobApi + "/" + record.id, options);
-
-    props.fetchApi();
+    await deleteTask(record);
+    await props.fetchApi(searchTerm);
   };
   const showDeleteConfirm = (record) => {
     confirm({
@@ -153,7 +146,6 @@ const TableList = (props) => {
       cancelText: "No",
 
       onOk() {
-        // handleDelete(record);
         handleDeleteJob(record);
       },
       onCancel() {},
@@ -191,6 +183,7 @@ const TableList = (props) => {
     <div>
       <Table
         columns={columns}
+        rowKey={"id"}
         dataSource={props.jobs}
         loading={props.loading}
         style={{ borderRadius: "20px", overflow: "hidden" }}
