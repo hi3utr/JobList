@@ -5,20 +5,27 @@ import {
   BookFilled,
   EditOutlined,
   DeleteOutlined,
+  SortAscendingOutlined,
+  SortDescendingOutlined,
 } from "@ant-design/icons";
 import React, { useState, useContext } from "react";
 import * as dayjs from "dayjs";
 import moment from "moment";
 import { TaskModal } from "./TaskModal";
 import { SearchContext } from "./Provider/SearchProvider";
-import { AuthContext } from "./Provider/AuthProvider";
-import { deleteTask, getTaskList } from "./services/TaskService";
+import { deleteTask, updateBookmarkList } from "./services/TaskService";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Filter } from "./Filter";
+import { useTaskList } from "./hooks/useTaskList";
 
-const TableList = (props) => {
-  const { token } = useContext(AuthContext);
-  const { searchTerm, setSearchTerm } = useContext(SearchContext);
+const TableList = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { searchTerm, sort, setSort, page, setPage, pageSize } =
+    useContext(SearchContext);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [jobId, setJobId] = useState(0);
+
   const [task, setTask] = useState({
     title: "",
     start_date: "",
@@ -26,6 +33,9 @@ const TableList = (props) => {
     status: "",
     id: "",
   });
+
+  const { loading, jobs, fetchApi, pagination, setJobs } = useTaskList();
+
   const tags = [
     {
       value: "to do",
@@ -57,7 +67,7 @@ const TableList = (props) => {
 
   const handleOk = () => {
     setIsEditModalOpen(false);
-    props.fetchApi(searchTerm);
+    fetchApi(searchTerm);
   };
 
   const handleCancel = () => {
@@ -78,26 +88,113 @@ const TableList = (props) => {
     return;
   };
 
+  const sortData = (sortColumn) => {
+    const sortParams = new URLSearchParams(location.search);
+    const [column, sortDir] = sort.split(":");
+
+    if (column === sortColumn) {
+      if (sortDir === "asc") {
+        setSort(`${sortColumn}:desc`);
+        sortParams.set("sort", `${sortColumn}:desc`);
+      } else {
+        setSort(`${sortColumn}:asc`);
+        sortParams.set("sort", `${sortColumn}:asc`);
+      }
+    } else {
+      setSort(`${sortColumn}:asc`);
+      sortParams.set("sort", `${sortColumn}:asc`);
+    }
+    navigate({
+      pathname: location.pathname,
+      search: sortParams.toString(),
+    });
+  };
+
   const columns = [
     {
-      title: "NAME",
+      title: () => {
+        return (
+          <div className="cursor-pointer" onClick={() => sortData("title")}>
+            TITLE
+            {sort && sort.includes("title") && (
+              <div className="float-right flex items-center h-[22px]">
+                {sort.includes("asc") ? (
+                  <SortAscendingOutlined />
+                ) : (
+                  <SortDescendingOutlined />
+                )}
+              </div>
+            )}
+          </div>
+        );
+      },
       dataIndex: "title",
       key: "name",
     },
     {
-      title: "CREATED",
+      title: () => {
+        return (
+          <div
+            className="cursor-pointer"
+            onClick={() => {
+              sortData("start_date");
+            }}
+          >
+            CREATED
+            {sort && sort.includes("start_date") && (
+              <div className="float-right flex items-center h-[22px]">
+                {sort.includes("asc") ? (
+                  <SortAscendingOutlined />
+                ) : (
+                  <SortDescendingOutlined />
+                )}
+              </div>
+            )}
+          </div>
+        );
+      },
       dataIndex: "start_date",
       key: "created",
       render: (text) => <p>{dayjs(text).format("DD/MM/YYYY")}</p>,
     },
     {
-      title: "DEADLINE",
+      title: () => {
+        return (
+          <div className="cursor-pointer" onClick={() => sortData("end_date")}>
+            DEADLINE
+            {sort && sort.includes("end_date") && (
+              <div className="float-right flex items-center h-[22px]">
+                {sort.includes("asc") ? (
+                  <SortAscendingOutlined />
+                ) : (
+                  <SortDescendingOutlined />
+                )}
+              </div>
+            )}
+          </div>
+        );
+      },
       dataIndex: "end_date",
       key: "deadline",
       render: (text) => <p>{dayjs(text).format("DD/MM/YYYY")}</p>,
     },
     {
-      title: "STATUS",
+      title: () => {
+        return (
+          <div className="cursor-pointer" onClick={() => sortData("status")}>
+            STATUS
+            {sort && sort.includes("status") && (
+              <div className="float-right flex items-center h-[22px]">
+                {sort.includes("asc") ? (
+                  <SortAscendingOutlined />
+                ) : (
+                  <SortDescendingOutlined />
+                )}
+              </div>
+            )}
+          </div>
+        );
+      },
       key: "status",
       dataIndex: "status",
       render: (status) => <>{getStatus(status)}</>,
@@ -134,7 +231,7 @@ const TableList = (props) => {
 
   const handleDeleteJob = async (record) => {
     await deleteTask(record);
-    await props.fetchApi(searchTerm);
+    await fetchApi(searchTerm);
   };
   const showDeleteConfirm = (record) => {
     confirm({
@@ -152,45 +249,41 @@ const TableList = (props) => {
     });
   };
 
-  const updateBookmark = (record) => {
-    var options = {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ data: { bookmark: !record.bookmark } }),
-    };
-    fetch(props.jobApi + "/" + record.id, options).then(function (response) {
-      const index = props.jobs.findIndex((job) => job.id === record.id);
+  const updateBookmark = async (record) => {
+    await updateBookmarkList(record);
+    const index = jobs.findIndex((job) => job.id === record.id);
 
-      if (index > -1) {
-        props.setJobs((prev) => {
-          const newRecord = {
-            ...record,
-            bookmark: !record.bookmark,
-          };
-          const temp = [...prev];
-          temp.splice(index, 1, newRecord);
-          return temp;
-        });
-      }
-
-      return response.json();
-    });
+    if (index > -1) {
+      setJobs((prev) => {
+        const newRecord = {
+          ...record,
+          bookmark: !record.bookmark,
+        };
+        const temp = [...prev];
+        temp.splice(index, 1, newRecord);
+        return temp;
+      });
+    }
   };
   return (
     <div>
+      <Filter />
       <Table
         columns={columns}
         rowKey={"id"}
-        dataSource={props.jobs}
-        loading={props.loading}
+        dataSource={jobs}
+        loading={loading}
         style={{ borderRadius: "20px", overflow: "hidden" }}
+        pagination={{
+          position: ["bottomCenter"],
+          pageSize: pageSize,
+          current: page,
+          total: pagination.total,
+          onChange: (pageNumber) => setPage(pageNumber),
+        }}
       />
       {isEditModalOpen && (
         <TaskModal
-          jobApi={props.jobApi}
           isEditModalOpen={isEditModalOpen}
           handleOk={handleOk}
           handleCancel={handleCancel}

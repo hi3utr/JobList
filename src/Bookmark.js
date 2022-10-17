@@ -7,22 +7,22 @@ import { AuthContext } from "./Provider/AuthProvider";
 import { getBookmarkList } from "./services/TaskService";
 
 export const Bookmark = () => {
-  const { token } = useContext(AuthContext);
-  const { searchTerm, setSearchTerm } = useContext(SearchContext);
-  const [loading, setLoading] = useState(true);
-  var jobApi = process.env.REACT_APP_API_URL + "/todo";
-  const [jobs, setJobs] = useState([]);
-  const fetchApi = async (search) => {
-    setLoading(true);
-    const res = await getBookmarkList(search);
-    setJobs(res.data.results);
-    setLoading(false);
-  };
+  // const { token } = useContext(AuthContext);
+  // const { searchTerm, setSearchTerm } = useContext(SearchContext);
+  // const [loading, setLoading] = useState(true);
+  // var jobApi = process.env.REACT_APP_API_URL + "/todo";
+  // const [jobs, setJobs] = useState([]);
+  // const fetchApi = async (search) => {
+  //   setLoading(true);
+  //   const res = await getBookmarkList(search);
+  //   setJobs(res.data.results);
+  //   setLoading(false);
+  // };
 
-  useEffect(() => {
-    if (searchTerm) fetchApi(searchTerm);
-    else fetchApi();
-  }, [searchTerm]);
+  // useEffect(() => {
+  //   if (searchTerm) fetchApi(searchTerm);
+  //   else fetchApi();
+  // }, [searchTerm]);
   return (
     <div
       style={{
@@ -35,11 +35,11 @@ export const Bookmark = () => {
     >
       <NavBar />
       <BookmarkList
-        jobs={jobs}
-        setJobs={setJobs}
-        jobApi={jobApi}
-        fetchApi={fetchApi}
-        loading={loading}
+      // jobs={jobs}
+      // setJobs={setJobs}
+      // jobApi={jobApi}
+      // fetchApi={fetchApi}
+      // loading={loading}
       />
     </div>
   );

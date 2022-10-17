@@ -1,17 +1,15 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Input, message } from "antd";
-import React, { useState, useEffect, useContext } from "react";
+import { Button, Checkbox, Form, Input } from "antd";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
-import { AuthContext } from "./Provider/AuthProvider";
-import { loginFeat } from "./services/AuthService";
+import { AuthContext } from "../../Provider/AuthProvider";
+import { loginFeat } from "../../services/AuthService";
 
 const Login = () => {
   const [errMsg, setErrMsg] = useState("");
   const { setToken } = useContext(AuthContext);
   const onFinish = async (values) => {
     try {
-      const loginApi = process.env.REACT_APP_API_URL + "/auth/local";
       const response = await loginFeat(values);
       const { jwt } = response.data;
       localStorage.setItem("token", jwt);

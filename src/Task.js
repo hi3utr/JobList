@@ -1,30 +1,7 @@
+import React from "react";
 import TableList from "./TableList";
 import { NavBar } from "./NavBar";
-import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
-import { SearchContext } from "./Provider/SearchProvider";
-import { AuthContext } from "./Provider/AuthProvider";
-import Instance from "./AxiosInstance";
-import { getTaskList } from "./services/TaskService";
 export const Task = () => {
-  const [loading, setLoading] = useState(true);
-  const { token } = useContext(AuthContext);
-
-  const { searchTerm, setSearchTerm } = useContext(SearchContext);
-  var jobApi = process.env.REACT_APP_API_URL + "/todo";
-  const [jobs, setJobs] = useState([]);
-  const fetchApi = async (search) => {
-    setLoading(true);
-    const res = await getTaskList(search);
-
-    setJobs(res.data.results);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    if (searchTerm) fetchApi(searchTerm);
-    else fetchApi();
-  }, [searchTerm]);
   return (
     <div
       className="App h-[100vh]"
@@ -35,14 +12,8 @@ export const Task = () => {
         backgroundSize: "cover",
       }}
     >
-      <NavBar fetchApi={fetchApi} />
-      <TableList
-        jobs={jobs}
-        setJobs={setJobs}
-        jobApi={jobApi}
-        fetchApi={fetchApi}
-        loading={loading}
-      />
+      <NavBar />
+      <TableList />
     </div>
   );
 };

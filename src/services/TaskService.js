@@ -1,8 +1,14 @@
 import Instance from "../AxiosInstance";
 
-export const getTaskList = async (search) => {
+export const getTaskList = async (search, sort, filter, page, pageSize) => {
   const res = await Instance.get("/todo", {
-    params: { search },
+    params: {
+      search,
+      sort,
+      ...filter,
+      "pagination[page]": page,
+      "pagination[pageSize]": pageSize,
+    },
   });
   return res;
 };
@@ -26,9 +32,16 @@ export const addTask = async (data) => {
   return res;
 };
 
-export const getBookmarkList = async (search) => {
+export const getBookmarkList = async (search, sort, filter, page, pageSize) => {
   const res = await Instance.get("/todo", {
-    params: { search, bookmark: true },
+    params: {
+      search,
+      bookmark: true,
+      sort,
+      ...filter,
+      "pagination[page]": page,
+      "pagination[pageSize]": pageSize,
+    },
   });
   return res;
 };

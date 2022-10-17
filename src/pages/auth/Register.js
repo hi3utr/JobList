@@ -1,22 +1,8 @@
-import {
-  AutoComplete,
-  Button,
-  Cascader,
-  Checkbox,
-  Col,
-  Form,
-  Input,
-  InputNumber,
-  Row,
-  Select,
-} from "antd";
-import { AuthContext } from "./Provider/AuthProvider";
-
-import axios from "axios";
+import { Button, Form, Input } from "antd";
 import { Link } from "react-router-dom";
 import React, { useState, useContext } from "react";
-import { registerFeat } from "./services/AuthService";
-const { Option } = Select;
+import { registerFeat } from "../../services/AuthService";
+import { AuthContext } from "../../Provider/AuthProvider";
 
 const formItemLayout = {
   labelCol: {

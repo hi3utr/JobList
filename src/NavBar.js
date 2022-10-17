@@ -1,33 +1,17 @@
 import React, { useState, useContext, useRef } from "react";
-import {
-  Button,
-  Modal,
-  DatePicker,
-  Space,
-  Select,
-  Form,
-  Dropdown,
-  Menu,
-  message,
-} from "antd";
+import { Dropdown, Menu, message } from "antd";
 import { TaskModal } from "./TaskModal";
 import moment from "moment";
 import { SearchContext } from "./Provider/SearchProvider";
 import { AuthContext } from "./Provider/AuthProvider";
 import { debounce } from "lodash";
-import {
-  BookOutlined,
-  DownOutlined,
-  UserOutlined,
-  LogoutOutlined,
-} from "@ant-design/icons";
-import { Link } from "react-router-dom";
-import MenuItem from "antd/lib/menu/MenuItem";
-import { useNavigate } from "react-router-dom";
+import { BookOutlined, UserOutlined, LogoutOutlined } from "@ant-design/icons";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
-export const NavBar = (props) => {
+export const NavBar = () => {
   const { setToken } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = (e) => {
     message.info("Logged out");
@@ -69,7 +53,7 @@ export const NavBar = (props) => {
   });
   const inputSearch = useRef();
 
-  const { searchTerm, setSearchTerm } = useContext(SearchContext);
+  const { searchTerm, setSearchTerm, setPage } = useContext(SearchContext);
 
   const onChange = (date, dateString) => {};
   const showEditModal = (record) => {
@@ -85,13 +69,25 @@ export const NavBar = (props) => {
   const handleOk = () => {
     setIsEditModalOpen(false);
     inputSearch.current.value = "";
-    props.fetchApi();
+    setSearchTerm("");
+    setPage(1);
+    const replace = ["/", "/bookmarks"].includes(location.pathname);
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set("search", "");
+    navigate(
+      {
+        pathname: replace ? location.pathname : "/",
+        search: searchParams.toString(),
+      },
+      {
+        replace,
+      }
+    );
   };
 
   const handleCancel = () => {
     setIsEditModalOpen(false);
   };
-  const { confirm } = Modal;
 
   return (
     <div className="flex justify-between px-[26px] py-[24px] items-center">
@@ -106,8 +102,21 @@ export const NavBar = (props) => {
             className="border rounded-[5px] mr-[27px] py-[8px] pl-[12px] text-[12px] pr-[30px]"
             ref={inputSearch}
             placeholder="Search task"
+            defaultValue={searchTerm}
             onChange={debounce((e) => {
               setSearchTerm(e.target.value.toLocaleLowerCase());
+              const replace = ["/", "/bookmarks"].includes(location.pathname);
+              const searchParams = new URLSearchParams(location.search);
+              searchParams.set("search", e.target.value.toLocaleLowerCase());
+              navigate(
+                {
+                  pathname: replace ? location.pathname : "/",
+                  search: searchParams.toString(),
+                },
+                {
+                  replace,
+                }
+              );
             }, 500)}
           />
           <img
