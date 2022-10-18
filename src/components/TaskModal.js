@@ -1,8 +1,9 @@
 import { Space, Modal, Form, Select, DatePicker, Button } from "antd";
 import moment from "moment";
 import React, { useState, useMemo, useCallback, useContext } from "react";
-import { AuthContext } from "./Provider/AuthProvider";
-import { addTask, updateTask } from "./services/TaskService";
+import { AuthContext } from "../Provider/AuthProvider";
+
+import { addTask, updateTask } from "../services/TaskService";
 
 export const TaskModal = (props) => {
   const { token } = useContext(AuthContext);

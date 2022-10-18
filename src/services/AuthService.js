@@ -1,4 +1,4 @@
-import Instance from "../AxiosInstance";
+import Instance from "../components/AxiosInstance";
 
 export const loginFeat = async (values) => {
   const res = await Instance.post("/auth/local", {

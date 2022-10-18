@@ -1,9 +1,10 @@
 import React, { createContext, useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
-export const SearchContext = createContext({});
+export const SearchBookmarkContext = createContext({});
 
-export const SearchProvider = ({ children }) => {
+export const BookmarkProvider = ({ children }) => {
+  const navigate = useNavigate();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const [sort, setSort] = useState(params.get("sort") || "");
@@ -26,7 +27,7 @@ export const SearchProvider = ({ children }) => {
   }, [location.search]);
 
   return (
-    <SearchContext.Provider
+    <SearchBookmarkContext.Provider
       value={{
         searchTerm,
         setSearchTerm,
@@ -41,6 +42,6 @@ export const SearchProvider = ({ children }) => {
       }}
     >
       {children}
-    </SearchContext.Provider>
+    </SearchBookmarkContext.Provider>
   );
 };

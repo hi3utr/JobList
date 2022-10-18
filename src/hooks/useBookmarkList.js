@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react";
 import { useState } from "react";
-import { SearchContext } from "../Provider/SearchProvider";
+import { SearchBookmarkContext } from "../Provider/bookmarkProvider";
 import { getBookmarkList } from "../services/TaskService";
 
 export const useBookmarkList = () => {
@@ -12,8 +12,9 @@ export const useBookmarkList = () => {
     total: 1,
   });
 
-  const { searchTerm, sort, filter, page, pageSize } =
-    useContext(SearchContext);
+  const { searchTerm, sort, filter, page, pageSize } = useContext(
+    SearchBookmarkContext
+  );
 
   const fetchApi = async (search, sort, filter, page, pageSize) => {
     setLoading(true);

@@ -11,12 +11,12 @@ import {
 import React, { useState, useContext } from "react";
 import * as dayjs from "dayjs";
 import moment from "moment";
-import { TaskModal } from "./TaskModal";
-import { SearchContext } from "./Provider/SearchProvider";
-import { deleteTask, updateBookmarkList } from "./services/TaskService";
+import { TaskModal } from "../../components/TaskModal";
+import { SearchContext } from "../../Provider/SearchProvider";
+import { deleteTask, updateBookmarkList } from "../../services/TaskService";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Filter } from "./Filter";
-import { useTaskList } from "./hooks/useTaskList";
+import { Filter } from "./HomeFilter";
+import { useTaskList } from "../../hooks/useTaskList";
 
 const TableList = () => {
   const navigate = useNavigate();

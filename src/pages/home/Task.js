@@ -1,6 +1,6 @@
 import React from "react";
 import TableList from "./TableList";
-import { NavBar } from "./NavBar";
+import { NavBar } from "../../components/NavBar";
 export const Task = () => {
   return (
     <div

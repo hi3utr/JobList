@@ -11,18 +11,18 @@ import {
 import React, { useState, useContext } from "react";
 import * as dayjs from "dayjs";
 import moment from "moment";
-import { TaskModal } from "./TaskModal";
-import { SearchContext } from "./Provider/SearchProvider";
-import { AuthContext } from "./Provider/AuthProvider";
-import { deleteTask, updateBookmarkList } from "./services/TaskService";
-import { Filter } from "./Filter";
+import { TaskModal } from "../../components/TaskModal";
+import { deleteTask, updateBookmarkList } from "../../services/TaskService";
+import { BookmarkFilter } from "../bookmark/BookmarkFilter";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useBookmarkList } from "./hooks/useBookmarkList";
+import { useBookmarkList } from "../../hooks/useBookmarkList";
+import { SearchBookmarkContext } from "../../Provider/bookmarkProvider";
 const BookmarkList = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { searchTerm, sort, setSort, page, setPage, pageSize } =
-    useContext(SearchContext);
+  const { searchTerm, sort, setSort, page, setPage, pageSize } = useContext(
+    SearchBookmarkContext
+  );
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [jobId, setJobId] = useState(0);
 
@@ -267,7 +267,7 @@ const BookmarkList = (props) => {
 
   return (
     <div>
-      <Filter />
+      <BookmarkFilter />
       <Table
         columns={columns}
         dataSource={jobs}

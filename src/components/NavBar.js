@@ -2,8 +2,7 @@ import React, { useState, useContext, useRef } from "react";
 import { Dropdown, Menu, message } from "antd";
 import { TaskModal } from "./TaskModal";
 import moment from "moment";
-import { SearchContext } from "./Provider/SearchProvider";
-import { AuthContext } from "./Provider/AuthProvider";
+import { AuthContext } from "../Provider/AuthProvider";
 import { debounce } from "lodash";
 import { BookOutlined, UserOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -12,6 +11,7 @@ export const NavBar = () => {
   const { setToken } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const params = new URLSearchParams(location.search);
 
   const handleLogout = (e) => {
     message.info("Logged out");
@@ -53,8 +53,6 @@ export const NavBar = () => {
   });
   const inputSearch = useRef();
 
-  const { searchTerm, setSearchTerm, setPage } = useContext(SearchContext);
-
   const onChange = (date, dateString) => {};
   const showEditModal = (record) => {
     setTask({
@@ -69,8 +67,6 @@ export const NavBar = () => {
   const handleOk = () => {
     setIsEditModalOpen(false);
     inputSearch.current.value = "";
-    setSearchTerm("");
-    setPage(1);
     const replace = ["/", "/bookmarks"].includes(location.pathname);
     const searchParams = new URLSearchParams(location.search);
     searchParams.set("search", "");
@@ -102,9 +98,8 @@ export const NavBar = () => {
             className="border rounded-[5px] mr-[27px] py-[8px] pl-[12px] text-[12px] pr-[30px]"
             ref={inputSearch}
             placeholder="Search task"
-            defaultValue={searchTerm}
+            defaultValue={params.get("search")}
             onChange={debounce((e) => {
-              setSearchTerm(e.target.value.toLocaleLowerCase());
               const replace = ["/", "/bookmarks"].includes(location.pathname);
               const searchParams = new URLSearchParams(location.search);
               searchParams.set("search", e.target.value.toLocaleLowerCase());

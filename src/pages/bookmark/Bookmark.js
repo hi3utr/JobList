@@ -1,10 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
-import { SearchContext } from "./Provider/SearchProvider";
 import BookmarkList from "./BookmarkList";
-import { NavBar } from "./NavBar";
-import { AuthContext } from "./Provider/AuthProvider";
-import { getBookmarkList } from "./services/TaskService";
+import { NavBar } from "../../components/NavBar";
 
 export const Bookmark = () => {
   // const { token } = useContext(AuthContext);

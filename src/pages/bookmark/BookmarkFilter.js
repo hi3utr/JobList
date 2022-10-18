@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import { Space, Modal, Form, Select, DatePicker, Button, Card } from "antd";
-import { SearchContext } from "./Provider/SearchProvider";
+import { SearchBookmarkContext } from "../../Provider/bookmarkProvider";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
-export const Filter = () => {
-  const { setFilter, filter } = useContext(SearchContext);
+export const BookmarkFilter = () => {
+  const { setFilter, filter } = useContext(SearchBookmarkContext);
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const location = useLocation();

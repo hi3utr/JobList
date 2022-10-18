@@ -1,4 +1,4 @@
-import Instance from "../AxiosInstance";
+import Instance from "../components/AxiosInstance";
 
 export const getTaskList = async (search, sort, filter, page, pageSize) => {
   const res = await Instance.get("/todo", {

@@ -7,10 +7,10 @@ import {
 import { Button, Card, Checkbox, Form, Input, message } from "antd";
 import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
-import { AuthContext } from "./Provider/AuthProvider";
-import { NavBar } from "./NavBar";
+import { AuthContext } from "../../Provider/AuthProvider";
+import { NavBar } from "../../components/NavBar";
 import { isEmpty } from "lodash";
-import { changePasswordFeat } from "./services/AuthService";
+import { changePasswordFeat } from "../../services/AuthService";
 
 export const Profile = () => {
   const [loading, setLoading] = useState(true);
